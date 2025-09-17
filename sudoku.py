@@ -96,13 +96,48 @@ class SudokuGUI:
                     return False
         return True
 
+    def is_initial_grid_valid(self, grid):
+        # Check rows and columns
+        for i in range(9):
+            row_nums = set()
+            col_nums = set()
+            for j in range(9):
+                # Check row
+                if grid[i][j] != 0:
+                    if grid[i][j] in row_nums:
+                        return False
+                    row_nums.add(grid[i][j])
+                # Check column
+                if grid[j][i] != 0:
+                    if grid[j][i] in col_nums:
+                        return False
+                    col_nums.add(grid[j][i])
+        # Check 3x3 boxes
+        for box_row in range(3):
+            for box_col in range(3):
+                nums = set()
+                for i in range(3):
+                    for j in range(3):
+                        val = grid[3*box_row + i][3*box_col + j]
+                        if val != 0:
+                            if val in nums:
+                                return False
+                            nums.add(val)
+        return True
+
     def solve(self):
         grid = self.get_grid()
+        if not self.is_initial_grid_valid(grid):
+            messagebox.showerror(
+                "Invalid Input", "There are duplicate numbers in a row, column, or 3x3 box. Please correct your input."
+            )
+            return
         if self.solve_sudoku(grid):
             self.set_grid(grid)
         else:
             messagebox.showwarning(
-                "Unsolvable", "This puzzle cannot be solved. Please check your input.")
+                "Unsolvable", "This puzzle cannot be solved. Please check your input."
+            )
 
 
 if __name__ == "__main__":
